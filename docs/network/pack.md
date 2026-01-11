@@ -1,30 +1,16 @@
 # 数据包
 
-## `tcp`三次握手
+## tcp三次握手
 
-@startuml
-autonumber
-participant Client
-participant Server
+> 创建连接
 
-Client -> Server : SYN(Seq=x)
-Server -> Client : SYN-ACK(Seq=y, Ack=x+1)
-Client -> Server : ACK(Ack=y+1)
-@enduml
+![pack1](/network/pack1.svg)
 
+## tcp四次挥手
 
-## `tcp`四次挥手
+> 断开连接
 
-@startuml
-autonumber
-participant Client
-participant Server
-
-Client -> Server : FIN(Seq=u)
-Server -> Client : ACK(Ack=u+1)
-Server -> Client : FIN(Seq=v)
-Client -> Server : ACK(Ack=v+1)
-@enduml
+![pack2](/network/pack2.svg)
 
 
 ## 实验环境搭建

@@ -31,10 +31,29 @@ export default defineConfig({
         ]
       },
       {
+        text: 'C语言',
+        items: [
+          { text: '领域驱动设计(核心)', link: '/c/ddd.md' },
+          { text: '环境搭建', link: '/c/README.md' },
+          { text: '交叉编译', link: '/c/cross.md' },
+          { text: 'QEMU', link: '/c/qemu.md' },
+          { text: '基础', link: '/c/basic.md' },
+        ]
+      },
+      {
         text: 'Python',
         items: [
           { text: 'python环境', link: '/python/python.md' },
           { text: '创建最小项目', link: '/python/project.md' },
+        ]
+      },
+      {
+        text: 'docker',
+        items: [
+          { text: '基础指令', link: '/docker/README.md' },
+          { text: '网络', link: '/docker/network.md' },
+          { text: '代理', link: '/docker/science.md' },
+          { text: '常用服务配置', link: '/docker/ser.md' },
         ]
       },
       {
@@ -50,16 +69,27 @@ export default defineConfig({
         ]
       },
       {
+        text: '黑工厂',
+        items: [
+          { text: '公共', link: '/nd/public.md' },
+          { text: '主页功能调试', link: '/nd/index.md' },
+          { text: '实时功能调试', link: '/nd/realtime.md' },
+          { text: '历史数据调试', link: '/nd/history.md' },
+          { text: '开发部署过程', link: '/nd/update.md' },
+          { text: '告警', link: '/nd/alarm.md' },
+          { text: 'https', link: '/nd/ssl.md' },
+        ]
+      },
+      {
         text: '草稿',
         items: [
           { text: '2025年11月', link: '/todo/todo.md' },
         ]
       },
       {
-        text: 'Examples',
+        text: '临时(git忽略)',
         items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/api-examples' }
+          { text: '说明', link: '/temp/readme.md' }
         ]
       }
     ],
