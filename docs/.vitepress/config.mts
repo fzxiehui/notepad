@@ -48,6 +48,18 @@ export default defineConfig({
         ]
       },
       {
+        text: 'go语言',
+        items: [
+          { text: '环境搭建', link: '/golang/install.md' },
+          { text: '交叉编译', link: '/golang/build.md' },
+          { text: '上下文操作', link: '/golang/context.md' },
+          { text: '日志', link: '/golang/log.md' },
+          { text: '科学计算', link: '/golang/decimal.md' },
+          { text: '串口操作', link: '/golang/uart.md' },
+          { text: 'websocket', link: '/golang/websocket.md' },
+        ]
+      },
+      {
         text: 'docker',
         items: [
           { text: '基础指令', link: '/docker/README.md' },
