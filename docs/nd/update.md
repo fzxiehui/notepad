@@ -14,6 +14,12 @@ sudo ip route add 192.168.2.0/24 dev eno2
 ssh root@192.168.2.89
 ```
 
+- uart
+
+```shell
+sudo picocom -b 115200 /dev/ttyUSB0
+```
+
 - docker 
 
 ```shell
