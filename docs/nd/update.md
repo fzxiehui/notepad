@@ -44,3 +44,53 @@ systemctl start hpweb_broadcast
 ```shell
 systemctl restart dbwriter
 ```
+
+
+## 临时升级
+
+- 改进版
+
+> 改进原因, 本地代理导致无法访问grpc
+
+```shell
+root@ubuntu:/etc# cat /usr/lib/systemd/system/otaweb.service 
+## 临时升级
+[Unit]
+Description=OTA Web Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/web
+ExecStart=/web/usrbin/python/bin/python /web/app.py
+Restart=on-failure
+RestartSec=5s
+LimitNOFILE=1048576
+
+Environment=PYTHONUNBUFFERED=1
+Environment=NO_PROXY=127.0.0.1,localhost
+
+[Install]
+WantedBy=multi-user.target
+root@ubuntu:/etc# 
+```
+
+```ini
+root@mbmu-demostic:~# cat /web/app/app/script/deploy/otaweb.service 
+[Unit]
+Description=OTA Web Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Restart=on-failure
+RestartSec=5s
+ExecStart=/web/usrbin/python/bin/python /web/app.py
+LimitNOFILE=1048576
+
+[Install]
+WantedBy=multi-user.target
+```
