@@ -1,5 +1,17 @@
 # 更新
 
+## 手动部署
+
+```shell
+root@mbmu-demostic:~# cat webtest/test.sh 
+mkdir -p temp
+rm -rf temp/*
+tar -xf ./build.tar.gz -C ./temp
+cd temp
+/web/usrbin/python/bin/python install_ubuntu.py --cmd=uninstall
+/web/usrbin/python/bin/python install_ubuntu.py --cmd=install
+```
+
 ## 公共步骤
 - 代理
 ```shell
