@@ -1,6 +1,7 @@
 # 安装
 
-##
+## 串口使用
+
 ```shell
 sudo picocom -b 115200 /dev/ttyUSB0 
 ```

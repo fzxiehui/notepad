@@ -90,6 +90,9 @@ export default defineConfig({
           { text: '开发部署过程', link: '/nd/update.md' },
           { text: '告警', link: '/nd/alarm.md' },
           { text: 'https', link: '/nd/ssl.md' },
+          { text: '写入程序', link: '/nd/dbwriter.md' },
+          { text: '运行分析', link: '/nd/run.md' },
+          { text: '系统控制', link: '/nd/sysctl.md' },
         ]
       },
       {

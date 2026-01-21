@@ -3,6 +3,16 @@
 ## 手动部署
 
 ```shell
+老镜像
+root@mbmu-demostic:~/webtest# cat test.sh      
+mkdir -p temp
+rm -rf temp/*
+tar -xf ./build.tar.gz -C ./temp
+cd temp
+python install.py --cmd=uninstall
+python install.py --cmd=install
+
+ubuntu 新板
 root@mbmu-demostic:~# cat webtest/test.sh 
 mkdir -p temp
 rm -rf temp/*
