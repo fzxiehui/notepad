@@ -116,3 +116,61 @@ LimitNOFILE=1048576
 [Install]
 WantedBy=multi-user.target
 ```
+
+## 初始化
+
+```shell
+#!/bin/sh
+
+set -e
+
+TD_IMAGE="tdengine/tdengine"
+TD_TAR="/data/web/tdengine_3.3.6.9.tar"
+
+NGINX_IMAGE="nginx"
+NGINX_TAR="/data/web/nginx-1.26-alpine.tar"
+
+COMPOSE_FILE="/web/docker-compose.yaml"
+DOCKER_COMPOSE="/usr/bin/docker-compose"
+
+echo "====== step 1: check tdengine image ======"
+if ! docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "^${TD_IMAGE}:"; then
+    echo "tdengine load ..."
+    if [ -f "$TD_TAR" ]; then
+        docker load -i "$TD_TAR"
+        rm -f "$TD_TAR"
+        echo "tdengine load success"
+    else
+        echo "$TD_TAR does not exist !"
+    fi
+else
+    echo "tdengine image exist"
+fi
+
+echo "====== step 2: check nginx image ======"
+if ! docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "^${NGINX_IMAGE}:"; then
+    echo "nginx load ..."
+    if [ -f "$NGINX_TAR" ]; then
+        docker load -i "$NGINX_TAR"
+        rm -f "$NGINX_TAR"
+        echo "nginx load success"
+    else
+        echo "$NGINX_TAR does not exist !"
+    fi
+else
+    echo "nginx image exist"
+fi
+
+echo "====== step 3: check docker run ======"
+NGINX_RUNNING=$(docker ps --format '{{.Image}}' | grep -c '^nginx')
+TD_RUNNING=$(docker ps --format '{{.Image}}' | grep -c '^tdengine/tdengine')
+
+if [ "$NGINX_RUNNING" -eq 0 ] || [ "$TD_RUNNING" -eq 0 ]; then
+    echo "nginx or tdengine not running, start docker-compose..."
+    $DOCKER_COMPOSE -f "$COMPOSE_FILE" up -d
+else
+    echo "docker-compose already started"
+fi
+
+echo "====== end ======"
+```
