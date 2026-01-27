@@ -52,6 +52,7 @@ export default defineConfig({
         items: [
           { text: '环境搭建', link: '/golang/install.md' },
           { text: '交叉编译', link: '/golang/build.md' },
+          { text: '项目搭建', link: '/golang/project.md' },
           { text: '上下文操作', link: '/golang/context.md' },
           { text: '日志', link: '/golang/log.md' },
           { text: '科学计算', link: '/golang/decimal.md' },

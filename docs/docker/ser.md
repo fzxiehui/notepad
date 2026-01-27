@@ -15,8 +15,8 @@ services:
       - USER_GID=1000
     restart: always
     networks:
-      gitnet:
-        ipv4_address: 172.16.2.1
+      dev:
+        ipv4_address: 10.0.0.253
     volumes:
       - ./gitea:/data
       - /etc/timezone:/etc/timezone:ro
@@ -26,12 +26,13 @@ services:
       - "222:22"
 
 networks:
-  gitnet:
+  dev:
+    name: dev
     driver: bridge
     ipam:
       config:
-        - subnet: 172.16.2.0/24
-          gateway: 172.16.2.254
+        - subnet: 10.0.0.0/24
+          gateway: 10.0.0.254
 ```
 :::
 
@@ -74,13 +75,19 @@ version: '3'
 services:
   redis:
     image: redis:7.0
-    command: redis-server /usr/local/etc/redis/redis.conf
+    command: redis-server
     restart: always
+    networks:
+      dev:
+        ipv4_address: 10.0.0.252
     ports:
       - 6379:6379
     volumes:
-      - ./redis.conf:/usr/local/etc/redis/redis.conf
       - ./data:/data
+      
+networks:
+  dev:
+    external: true
 ```
 :::
 

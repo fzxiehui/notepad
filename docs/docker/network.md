@@ -4,11 +4,33 @@
 - bridge - 桥接到主机, 自定义``bridge``可以自动添加容器间``dns``解析。
 - host - 主机模式,相当于与把应用直接跑在主机上,并且不能配置端口映射。
 - null - 没有网络
+
+- 如果要加入现有网络:
+```yaml{8-10,16-18}
+version: '3'
+
+services:
+  redis:
+    image: redis:7.0
+    command: redis-server
+    restart: always
+    networks:
+      dev:
+        ipv4_address: 10.0.0.252
+    ports:
+      - 6379:6379
+    volumes:
+      - ./data:/data
+      
+networks:
+  dev:
+    external: true
+```
 :::
 
 - 自定义`bridge`互通测试
 
-	1. 创建`demo2.yml`文件并写入以下内容:
+	1. 创建`demo2.yaml`文件并写入以下内容:
 
     ```yaml
     version: '3'
@@ -30,6 +52,7 @@
 
     networks:
       demonetwork:
+        name: demonetwork
         driver: bridge
         ipam:
           config:
@@ -37,11 +60,11 @@
               gateway: 10.8.0.254
     ```
 
-	1. 启动容器`docker-compose -f demo2.yml up -d`
+	1. 启动容器`docker-compose -f demo2.yaml up -d`
 	1. 通过`docker exec -it demo1 /bin/bash`命令,进入`demo1`容器
 	1. 执行`ping demo2`,能**ping**通说明**容器间**通信正常。
 	1. 执行`ping 10.8.0.254`,能**ping**通说明与**宿主机**通信正常。
-	1. 关闭容器``docker-compose -f demo2.yml down``
+	1. 关闭容器``docker-compose -f demo2.yaml down``
 
 ## docker 导致网络故障
 

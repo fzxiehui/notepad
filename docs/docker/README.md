@@ -50,7 +50,7 @@ $ sudo chmod +x /usr/local/bin/docker-compose
 
 ## 运行第一个docker-compose
 
-1. 创建``demo1.yml``文件并写入以下内容:
+1. 创建``demo1.yaml``文件并写入以下内容:
 	
    ```yaml
     version: '3'
@@ -61,9 +61,9 @@ $ sudo chmod +x /usr/local/bin/docker-compose
         restart: always
     ```
 
-1. 运行``docker-compose -f demo1.yml up -d``
+1. 运行``docker-compose -f demo1.yaml up -d``
 1. 查看运行列表``docker ps``
 1. 进入容器``docker exec -it demo1 /bin/bash``
 1. 使用``ping www.aliyun.com``
 1. 退出``exit``
-1. 关闭容器``docker-compose -f demo1.yml down``
+1. 关闭容器``docker-compose -f demo1.yaml down``
