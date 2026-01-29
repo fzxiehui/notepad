@@ -82,6 +82,12 @@ export default defineConfig({
         ]
       },
       {
+        text: '物联网',
+        items: [
+          { text: '数据推送流程设计', link: '/iot/datapush.md' },
+        ]
+      },
+      {
         text: '黑工厂',
         items: [
           { text: '公共', link: '/nd/public.md' },
