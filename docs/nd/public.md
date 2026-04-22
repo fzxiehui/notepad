@@ -16,6 +16,29 @@ ip route show | grep 192.168.2
 ssh root@192.168.2.89
 ```
 
+- 服务重新部署
+
+```shell
+cd /data/
+systemctl stop hpweb
+rm /web/app -rf
+tar -vzxf build.tar.gz -C /web/
+systemctl start hpweb
+```
+
+- 重启相关服务
+
+```shell
+systemctl restart master-can-router
+systemctl restart someip-to-zmq
+
+systemctl stop master-can-router
+systemctl start master-can-router
+
+systemctl stop someip-to-zmq
+systemctl strat someip-to-zmq
+```
+
 - 部署
 
 ```shell
@@ -50,6 +73,13 @@ docker exec -it tdengine  /bin/bash
 ```shell
 taos
 use bms_db;
+```
+
+
+- 串口使用
+
+```shell
+sudo picocom -b 115200 /dev/ttyUSB0 
 ```
 
 ## 数据库

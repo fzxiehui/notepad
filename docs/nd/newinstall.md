@@ -21,6 +21,20 @@ systemctl stop hpweb_socket
 systemctl stop hpweb
 ```
 
+## 手动删除
+
+```shell
+systemctl stop hpwebt hpweb_broadcast hpweb_socket hpweb
+systemctl disable hpwebt hpweb_broadcast hpweb_socket hpweb
+
+rm /usr/lib/systemd/system/hpweb.service 
+rm /usr/lib/systemd/system/hpweb_broadcast.service 
+rm /usr/lib/systemd/system/hpweb_ota.service 
+rm /usr/lib/systemd/system/hpweb_socket.service 
+rm /usr/lib/systemd/system/hpwebt.service 
+cd /web && ls -A | grep -v '^lost+found$' | xargs rm -rf
+```
+
 
 ## 构建脚本
 
@@ -53,7 +67,7 @@ send:
 
 package:
 	@echo "package"
-	tar -zcf output/bin.tar.gz output/* -C .
+	tar -zcvf bin.tar.gz output/* -C .
 ```
 
 
@@ -76,26 +90,14 @@ NGINX_TAR="/data/web/nginx-1.26-alpine.tar"
 REDIS_IMAGE="redis"
 REDIS_TAR="/data/web/redis_7.0.tar"
 
-# step 4
-OTAWEB_PATH="/web/otaweb"
-
-# step 5
+# step 4 python
 USRBIN_PATH="/web/usrbin"
-
-# step 6
-APP_PATH="/web/app"
-
-# step 7
-DATABASE="/data/config/hpweb.db"
-PYTHON_EXE="/web/usrbin/python/bin/python"
-INSTALL_PY="/web/install.py"
 
 echo "====== step 1: check tdengine image ======"
 if ! docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "^${TD_IMAGE}:"; then
     echo "tdengine load ..."
     if [ -f "$TD_TAR" ]; then
         docker load -i "$TD_TAR"
-        rm -f "$TD_TAR"
         echo "tdengine load success"
     else
         echo "$TD_TAR does not exist !"
@@ -109,7 +111,6 @@ if ! docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "^${NGINX_IMAGE
     echo "nginx load ..."
     if [ -f "$NGINX_TAR" ]; then
         docker load -i "$NGINX_TAR"
-        rm -f "$NGINX_TAR"
         echo "nginx load success"
     else
         echo "$NGINX_TAR does not exist !"
@@ -123,7 +124,6 @@ if ! docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "^${REDIS_IMAGE
     if [ -f "$REDIS_TAR" ]; then
         echo "redis load ..."
         docker load -i "$REDIS_TAR"
-        rm -f "$REDIS_TAR"
         echo "redis load success"
     else
         echo "$REDIS_TAR does not exist !"
@@ -132,15 +132,7 @@ else
     echo "redis image exist"
 fi
 
-echo "====== step 4: check otaweb ======"
-if [ -d "$OTAWEB_PATH" ]; then
-    echo "otaweb install success"
-else
-    echo "unzip otaweb ..."
-    tar zxf /data/web/otaweb.tar.gz -C /web
-fi
-
-echo "====== step 5: check usrbin ======"
+echo "====== step 4: check usrbin ======"
 if [ -d "$USRBIN_PATH" ]; then
     echo "usrbin install success"
 else
@@ -148,20 +140,167 @@ else
     tar zxf /data/web/usrbin.tar.gz -C /web
 fi
 
-echo "====== step 6: check app ======"
-if [ -d "$APP_PATH" ]; then
-    echo "app install success"
-else
-    echo "unzip app ..."
-    tar zxf /data/web/build.tar.gz -C /web
-fi
-
-echo "====== step 7: check install ======"
-if [ -f "$DATABASE" ]; then
-    echo "install success ..."
-else
-    $PYTHON_EXE $INSTALL_PY
-fi
 echo "====== end ======"
 ```
 
+## 手动操作根文件
+
+```shell
+tar zxf /data/web/build.tar.gz -C /web
+cp /web/app/app/script/deploy/hpweb.service /usr/lib/systemd/system/
+systemctl enable hpweb.service
+systemctl start hpweb.service
+```
+
+## 复制文件
+
+```shell
+mkdir -p /data/web/ && cd /data/web/
+scp root@192.168.2.89:/build/output/* .
+```
+
+
+## 开发过程中使用的nginx配置
+
+```shell
+server {
+    listen 80;
+    listen [::]:80;
+    server_name localhost;
+
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name localhost;
+
+    ssl_certificate /etc/nginx/nginx.crt;
+    ssl_certificate_key /etc/nginx/nginx.key;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $host;
+
+    location /mbmu1/api/ota/ {
+
+        proxy_pass http://172.16.8.254:5661/;
+        # proxy_pass http://192.168.2.88:5001/;
+
+	client_max_body_size 0;
+	proxy_request_buffering off;
+	proxy_buffering off;
+
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+
+        proxy_connect_timeout 10s;
+        proxy_send_timeout 1200s;
+        proxy_read_timeout 1200s;
+    }
+
+    location /mbmu1/api/ {
+
+        proxy_pass http://172.16.8.254:5551/;
+        # proxy_pass http://192.168.2.88:5001/;
+
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+
+        proxy_connect_timeout 10s;
+        proxy_send_timeout 120s;
+        proxy_read_timeout 120s;
+        proxy_buffering off;
+    }
+
+
+
+    location /mbmu1/socket.io/ {
+
+        proxy_pass http://172.16.8.254:5552/socket.io/;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $http_connection;
+
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+
+        proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
+        proxy_connect_timeout 10s;
+
+        proxy_buffering off;
+
+    }
+
+        location /mbmu2/api/ {
+
+        proxy_pass http://192.168.2.2:5551/;
+
+
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+
+        proxy_connect_timeout 10s;
+        proxy_send_timeout 120s;
+        proxy_read_timeout 120s;
+        proxy_buffering off;
+    }
+
+
+    location /mbmu2/socket.io/ {
+
+        proxy_pass http://192.168.2.2:5552/socket.io/;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $http_connection;
+
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+
+        proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
+        proxy_connect_timeout 10s;
+
+        proxy_buffering off;
+
+    }
+
+    location / {
+	proxy_pass http://192.168.2.6:6800;
+
+	proxy_http_version 1.1;
+
+	proxy_set_header Upgrade $http_upgrade;
+	proxy_set_header Connection "upgrade";
+
+	proxy_set_header Host $host;
+	proxy_set_header X-Forwarded-For $remote_addr;
+    }
+
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /usr/share/nginx/html;
+    }
+}
+```

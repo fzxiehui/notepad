@@ -88,6 +88,12 @@ export default defineConfig({
         ]
       },
       {
+        text: '系统构建',
+        items: [
+          { text: 'u-boot', link: '/os/u-boot.md' },
+        ]
+      },
+      {
         text: '黑工厂',
         items: [
           { text: '公共', link: '/nd/public.md' },

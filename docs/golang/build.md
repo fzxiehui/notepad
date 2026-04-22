@@ -18,6 +18,17 @@ CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc GOOS=windows GOARCH=amd64 go build -o xx
 
 ```shell
 CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o app main.go
+
+# 如果要c库
+CGO_ENABLED=1 GOOS=linux GOARCH=arm64 CC=aarch64-linux-gnu-gcc go build -o app main.go
+
+# 如果要c++
+CGO_ENABLED=1 \
+GOOS=linux \
+GOARCH=arm64 \
+CC=aarch64-linux-gnu-gcc \
+CXX=aarch64-linux-gnu-g++ \
+go build -o app main.go
 ```
 
 ## `Linux x86_64`编译`linux arm64`应用,包含`CGO`

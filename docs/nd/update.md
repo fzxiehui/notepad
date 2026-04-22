@@ -86,7 +86,7 @@ Wants=network-online.target
 Type=simple
 User=root
 WorkingDirectory=/web
-ExecStart=/web/usrbin/python/bin/python /web/app.py
+ExecStart=/web/usrbin/python/bin/python /web/otaweb/app.py
 Restart=on-failure
 RestartSec=5s
 LimitNOFILE=1048576
@@ -96,7 +96,27 @@ Environment=NO_PROXY=127.0.0.1,localhost
 
 [Install]
 WantedBy=multi-user.target
+```
+
+- old
+
+```shell
 root@ubuntu:/etc# 
+
+[Unit]
+Description=hpweb ota Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Restart=on-failure
+RestartSec=5s
+ExecStart=/web/usrbin/python/bin/python /web/otaweb/app.py
+LimitNOFILE=1048576
+
+[Install]
+WantedBy=multi-user.target
 ```
 
 ```ini

@@ -1,5 +1,25 @@
 # ssl证书
 
+## mTLS
+
+```shell
+
+    ssl_certificate /etc/nginx/mTLS/server.crt;         
+    ssl_certificate_key /etc/nginx/mTLS/server.key;  
+   
+    ssl_client_certificate /etc/nginx/mTLS/rootCA.crt; 
+    ssl_verify_client on;
+ 
+
+    volumes:
+      - /web/html:/usr/share/nginx/html:ro
+      - /data/config/ng.conf:/etc/nginx/conf.d/default.conf:ro
+      - /data/config/nginx.crt:/etc/nginx/nginx.crt:ro
+      - /data/config/nginx.key:/etc/nginx/nginx.key:ro
+      - /data/web/logs/nginxlogs:/var/log/nginx
+      - /conf/mTLS:/etc/nginx/mTLS/
+```
+
 问题: 经过调试 post 接口不带参数时可以正常访问, 但是带上json 参数时 会在 request.json.get("xx") 时卡住
 原因: socketio 与 http 不能混用
 
@@ -29,6 +49,12 @@ openssl req -x509 -nodes -days 365 \
   -newkey rsa:2048 \
   -keyout /web/nginx.key \
   -out /web/nginx.crt \
+  -subj "/C=CN/ST=Test/L=Test/O=Test/OU=Dev/CN=localhost"
+
+openssl req -x509 -nodes -days 365 \
+  -newkey rsa:2048 \
+  -keyout /data/config/ssl/nginx.key \
+  -out /data/config/ssl/nginx.crt \
   -subj "/C=CN/ST=Test/L=Test/O=Test/OU=Dev/CN=localhost"
 ```
 
