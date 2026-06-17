@@ -97,6 +97,7 @@ export default defineConfig({
         text: '黑工厂',
         items: [
           { text: '公共', link: '/nd/public.md' },
+          { text: '编译镜像', link: '/nd/build.md' },
           { text: '主页功能调试', link: '/nd/index.md' },
           { text: '实时功能调试', link: '/nd/realtime.md' },
           { text: '历史数据调试', link: '/nd/history.md' },

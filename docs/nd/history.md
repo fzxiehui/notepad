@@ -24,3 +24,10 @@ INTERVAL(200a)
 ORDER BY _ts  DESC
 LIMIT 300;
 ```
+
+
+```sql
+SELECT first(BAT_SOC_HVS), _wstart AS _ts 
+FROM bms_db.S2A_SUMDATA5_12 WHERE tag1=1 AND tag2=0 AND ts >= '2026-06-05 12:00:00' AND ts < '2026-06-11 12:01:00' 
+INTERVAL(50a) FILL(prev) ORDER BY _ts DESC LIMIT 20 OFFSET 0;
+```

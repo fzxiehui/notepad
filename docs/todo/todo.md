@@ -43,3 +43,24 @@ sudo rmmod kvm
 echo "blacklist kvm_intel" | sudo tee /etc/modprobe.d/blacklist-kvm.conf
 echo "blacklist kvm" | sudo tee -a /etc/modprobe.d/blacklist-kvm.conf
 ```
+
+## systemctl 查看所有服务
+
+```shell
+systemctl list-units --type=service --all
+```
+
+
+## 抓包
+
+```shell
+tcpdump -i br0 -w /data/br0.pcap
+```
+
+## cmd go爱科学
+
+```shell
+go env -w GOPROXY=https://goproxy.cn,direct
+go env -w HTTP_PROXY=http://127.0.0.1:7890
+go env -w HTTPS_PROXY=http://127.0.0.1:7890
+```

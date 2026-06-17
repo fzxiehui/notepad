@@ -4,8 +4,6 @@
 
 ::: details 点击查看配置文件
 ```yaml
-version: '3'
-
 services:
   server:
     image: gitea/gitea:1.22.3
@@ -40,8 +38,6 @@ networks:
 
 ::: details 点击查看配置文件
 ```yaml
-version: '3'
-
 services:
   mysql:
     image: mysql:5.7
@@ -70,8 +66,6 @@ services:
 
 ::: details 点击查看配置文件
 ```yaml
-version: '3'
-
 services:
   redis:
     image: redis:7.0
@@ -95,8 +89,6 @@ networks:
 
 ::: details 点击查看配置文件
 ```yaml
-version: '3'
-
 services:
   emq:
     image: emqx/emqx:5.0.3
@@ -146,8 +138,6 @@ chmod -R a+w repo/
 
 ::: details 点击查看配置文件
 ```yaml
-version: '3'
-
 services:
   svn:
     container_name: svn
@@ -163,3 +153,55 @@ services:
 ```
 :::
 
+
+## VerneMQ
+
+::: details 点击查看配置文件
+```yaml
+services:
+  vernemq:
+    image: vernemq/vernemq:2.1.2
+    container_name: vernemq
+    restart: always
+    networks:
+      dev:
+        ipv4_address: 10.0.0.251
+    ports:
+      - "1883:1883"     # MQTT
+      - "8883:8883"     # MQTT SSL
+      - "8080:8080"     # Webhook / HTTP
+    environment:
+      # 最终用户许可协议 (必须)
+      - DOCKER_VERNEMQ_ACCEPT_EULA=yes
+      # 允许匿名（测试阶段建议开，生产关）
+      - DOCKER_VERNEMQ_ALLOW_ANONYMOUS=on
+
+      # listener
+      - DOCKER_VERNEMQ_LISTENER__TCP__DEFAULT=0.0.0.0:1883
+
+      # 日志
+      - DOCKER_VERNEMQ_LOG__CONSOLE=console
+
+      # ==== HTTP AUTH（认证）====
+      # - DOCKER_VERNEMQ_PLUGINS__VMQ_HTTP_AUTH=on
+      # - DOCKER_VERNEMQ_VMQ_HTTP_AUTH__HTTP_ENDPOINT=http://host.docker.internal:9000/auth
+      # - DOCKER_VERNEMQ_VMQ_HTTP_AUTH__HTTP_METHOD=post
+
+      # ==== ACL（权限）====
+      # - DOCKER_VERNEMQ_VMQ_HTTP_AUTH__ACL_ENDPOINT=http://host.docker.internal:9000/acl
+
+      # ==== Webhook（上下线事件）====
+      # - DOCKER_VERNEMQ_PLUGINS__VMQ_WEBHOOKS=on
+      # - DOCKER_VERNEMQ_VMQ_WEBHOOKS__WEBHOOK__ENDPOINT=http://host.docker.internal:9000/webhook
+
+      # ==== Hook 开启 ====
+      # - DOCKER_VERNEMQ_VMQ_WEBHOOKS__WEBHOOK__HOOKS=on_client_connected,on_client_disconnected
+
+    volumes:
+      - ./data:/vernemq/data
+      - ./log:/vernemq/log
+networks:
+  dev:
+    external: true
+```
+:::

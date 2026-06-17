@@ -5,6 +5,8 @@
 - 代理
 ```shell
 export https_proxy=http://192.168.2.9:7890 http_proxy=http://192.168.2.9:7890 all_proxy=socks5://192.168.2.9:7890
+
+export https_proxy=http://IP:7890 http_proxy=http://IP:7890 all_proxy=socks5://IP:7890
 ```
 
 - 网络
@@ -13,7 +15,7 @@ export https_proxy=http://192.168.2.9:7890 http_proxy=http://192.168.2.9:7890 al
 sudo ifconfig eno2 192.168.2.9
 sudo ip route add 192.168.2.0/24 dev eno2
 ip route show | grep 192.168.2
-ssh root@192.168.2.89
+ssh root@192.168.2.2
 ```
 
 - 服务重新部署
@@ -22,8 +24,10 @@ ssh root@192.168.2.89
 cd /data/
 systemctl stop hpweb
 rm /web/app -rf
+rm /data/config/hpweb.db
 tar -vzxf build.tar.gz -C /web/
 systemctl start hpweb
+journalctl -u hpweb -f
 ```
 
 - 重启相关服务

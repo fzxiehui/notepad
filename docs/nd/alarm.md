@@ -42,6 +42,7 @@ select * from alarm where recovery_time is null or recovery_time < "2000-01-01 0
 
 ```sql
 select * from alarm;
+SELECT COUNT(*) from alarm where fault_level <= 3 and recovery_time < fault_time;
 select * from alarm where recovery_time is null;
 select * from alarm where recovery_time is null or recovery_time < fault_time;
 select * from alarm where recovery_time is null or recovery_time < "2000-01-01 00:00:00.000";
