@@ -205,3 +205,141 @@ networks:
     external: true
 ```
 :::
+
+
+## MQTT
+
+- `mkdir -p ./mqtt/config`
+- `cd mqtt`
+
+- `docker-compose.yaml`
+::: details 点击查看配置文件
+```yaml
+services:
+  mosquitto:
+    image: iegomez/mosquitto-go-auth:3.0.0-mosquitto_2.0.18
+    container_name: mosquitto
+    restart: always
+    networks:
+      dev:
+        ipv4_address: 10.0.0.251
+
+    ports:
+      - "1883:1883"
+
+    volumes:
+      - ./config/mosquitto.conf:/etc/mosquitto/mosquitto.conf:ro
+
+    environment:
+      TZ: Asia/Shanghai
+
+networks:
+  dev:
+    external: true
+```
+:::
+
+- `./config/mosquitto.conf`
+
+```ini
+listener 1883
+
+allow_anonymous false
+
+plugin /mosquitto/go-auth.so
+
+# 使用 HTTP 认证
+auth_opt_backends http
+
+# 是否启用超级用户(默认启用)
+auth_opt_disable_superuser true
+
+# HTTP 服务地址
+auth_opt_http_host 10.0.0.254
+auth_opt_http_port 7771
+
+# 接口
+auth_opt_http_getuser_uri /api/mqtt/auth
+auth_opt_http_aclcheck_uri /api/mqtt/acl
+auth_opt_http_superuser_uri /api/mqtt/superuser
+
+# 请求参数格式
+auth_opt_http_params_mode json
+
+# 返回格式
+auth_opt_http_response_mode json
+
+# 超时时间
+auth_opt_http_timeout 5
+
+# 请求方法
+auth_opt_http_method POST
+
+log_dest stdout
+log_type all
+```
+
+- go gin server
+
+```go
+package main
+
+import (
+	"log"
+
+	"github.com/gin-gonic/gin"
+)
+
+type AuthResponse struct {
+	Ok    bool   `json:"ok"`
+	Error string `json:"error"`
+}
+
+func main() {
+	r := gin.Default()
+
+	// 认证
+	r.POST("/api/mqtt/auth", func(c *gin.Context) {
+		var req map[string]interface{}
+		_ = c.ShouldBindJSON(&req)
+
+		log.Printf("[AUTH] %+v", req)
+
+		c.JSON(200, AuthResponse{
+			Ok:    true,
+			Error: "",
+		})
+	})
+
+	// 认证
+	r.POST("/api/mqtt/superuser", func(c *gin.Context) {
+		var req map[string]interface{}
+		_ = c.ShouldBindJSON(&req)
+
+		log.Printf("[AUTH] %+v", req)
+
+		c.JSON(200, AuthResponse{
+			Ok:    true,
+			Error: "",
+		})
+	})
+
+	// ACL
+	r.POST("/api/mqtt/acl", func(c *gin.Context) {
+		var req map[string]interface{}
+		_ = c.ShouldBindJSON(&req)
+
+		log.Printf("[ACL] %+v", req)
+
+		c.JSON(200, AuthResponse{
+			Ok:    true,
+			Error: "",
+		})
+	})
+
+	log.Println("mqtt auth server listening on :7771")
+	if err := r.Run(":7771"); err != nil {
+		panic(err)
+	}
+}
+```
