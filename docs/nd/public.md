@@ -18,6 +18,20 @@ ip route show | grep 192.168.2
 ssh root@192.168.2.2
 ```
 
+- 服务重新部署(新版本)
+
+```shell
+systemctl disable hpweb hpweb_broadcast hpweb_ota hpweb_socket
+systemctl stop hpweb hpweb_broadcast hpweb_ota hpweb_socket
+rm /usr/lib/systemd/system/hpweb*
+find /web -mindepth 1 ! -name 'lost+found' -exec rm -rf {} +
+rm /data/config/hpweb.db
+tar xzf /data/output.tar.gz -C /web
+cp /web/systemd/* /usr/lib/systemd/system/
+systemctl enable hpweb hpweb_broadcast hpweb_ota hpweb_socket
+systemctl start hpweb hpweb_broadcast hpweb_ota hpweb_socket
+```
+
 - 服务重新部署
 
 ```shell
