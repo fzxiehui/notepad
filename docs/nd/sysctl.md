@@ -43,3 +43,46 @@ select last_row(st_pwrstatus) AS `4` from s2a_sumdata2_4 where tag1 = 4 and tag2
 ```sql
 select last_row(*) from m2p_sumdata6_7;
 ```
+
+## 查子表
+
+```sql
+# 子表 `s2a_sumdata2_4`
+SELECT table_name
+FROM information_schema.ins_tables
+WHERE stable_name = 's2a_sumdata2_4';
+```
+
+## 插入测试数据
+
+```sql
+INSERT INTO s2a_sumdata2_4_1_0 VALUES (
+    NOW,
+
+    true,
+    true,
+    false,
+    true,
+
+    2,
+    1,
+    100,
+
+    5,
+    12,
+    6,
+    88,
+
+    4200,
+    4100,
+    4150,
+
+    32,
+    28,
+    30,
+
+    3,
+    7
+);
+```
+

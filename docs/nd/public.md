@@ -32,6 +32,12 @@ systemctl enable hpweb hpweb_broadcast hpweb_ota hpweb_socket
 systemctl start hpweb hpweb_broadcast hpweb_ota hpweb_socket
 ```
 
+- 重新挂载
+
+```shell
+mount -o remount,rw /web
+```
+
 - 服务重新部署
 
 ```shell

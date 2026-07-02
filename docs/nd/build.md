@@ -335,7 +335,7 @@ docker run --rm -it \
 
 
 v6:
-docker run --rm  \
+cd /data && docker run --rm -d \
     -v ./work:/work/ \
     -p 3158:3158 \
     hpweb:0.0.6
